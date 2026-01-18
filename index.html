@@ -3,646 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Om Bachhav - Portfolio</title>
+    <title>Om Bachhav | Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #ff3e3e;
+            --primary-dark: #8b0000;
+            --bg-dark: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d0000 100%);
-            min-height: 100vh;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        /* Glassmorphism Classes */
+        .glass {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
         }
 
-        .edit-mode-toggle {
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        /* Hero Section Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animated Background Gradients */
+        .blob {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.4);
-            transition: transform 0.3s ease;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 62, 62, 0.15) 0%, transparent 70%);
+            filter: blur(80px);
+            z-index: -1;
+            animation: move 20s infinite alternate;
         }
 
-        .edit-mode-toggle:hover {
+        @keyframes move {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(20%, 20%); }
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .project-card:hover .project-image {
             transform: scale(1.05);
         }
 
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.3);
-            margin-bottom: 30px;
-            text-align: center;
-            animation: fadeInDown 0.8s ease;
-            position: relative;
-        }
-
-        .profile-photo-container {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            margin: 0 auto 25px;
-        }
-
-        .profile-photo {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid #dc143c;
-            box-shadow: 0 10px 30px rgba(220, 20, 60, 0.4);
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 4em;
-            font-weight: bold;
-        }
-
-        .photo-upload-btn {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: #dc143c;
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2em;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .edit-mode .photo-upload-btn {
-            display: flex;
-        }
-
-        .photo-upload-btn:hover {
-            background: #8b0000;
-        }
-
-        #photoInput {
-            display: none;
-        }
-
-        h1 {
-            font-size: 3em;
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
-
-        .editable {
-            position: relative;
-        }
-
-        .edit-mode .editable {
-            border: 2px dashed #dc143c;
-            padding: 5px;
-            border-radius: 5px;
-            cursor: text;
-        }
-
-        .edit-mode .editable:hover {
-            background: rgba(220, 20, 60, 0.05);
-        }
-
-        .contact-info {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .contact-info a, .contact-info span {
-            color: #8b0000;
-            text-decoration: none;
-            transition: transform 0.3s ease;
-            display: inline-block;
-        }
-
-        .contact-info a:hover {
-            transform: translateY(-3px);
-            color: #dc143c;
-        }
-
-        .profile-section {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 1s ease;
-        }
-
-        h2 {
-            color: #dc143c;
-            font-size: 2em;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #8b0000;
-            padding-bottom: 10px;
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .skill-category {
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            padding: 20px;
-            border-radius: 10px;
-            color: white;
-            transition: transform 0.3s ease;
-        }
-
-        .skill-category:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(220, 20, 60, 0.4);
-        }
-
-        .skill-category h3 {
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-
-        .project-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border-left: 5px solid #dc143c;
+        /* Skill Tag Hover */
+        .skill-tag {
             transition: all 0.3s ease;
         }
-
-        .project-card:hover {
-            transform: translateX(10px);
-            box-shadow: 0 5px 20px rgba(220, 20, 60, 0.3);
-        }
-
-        .project-card h3 {
-            color: #8b0000;
-            margin-bottom: 10px;
-        }
-
-        .project-link {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 20px;
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: transform 0.3s ease;
-        }
-
-        .project-link:hover {
-            transform: scale(1.05);
-        }
-
-        .education-item {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border-left: 4px solid #dc143c;
-        }
-
-        .education-item h3 {
-            color: #8b0000;
-            margin-bottom: 5px;
-        }
-
-        .year {
-            color: #dc143c;
-            font-weight: bold;
-        }
-
-        .soft-skills-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .soft-skill-tag {
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 0.95em;
-            transition: transform 0.3s ease;
-        }
-
-        .soft-skill-tag:hover {
-            transform: scale(1.1);
-        }
-
-        .languages {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .language-badge {
-            background: #8b0000;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-
-        nav {
-            position: sticky;
-            top: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            border-radius: 50px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-            z-index: 100;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        nav a {
-            color: #dc143c;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
-
-        nav a:hover {
-            color: #8b0000;
-        }
-
-        .save-btn {
-            display: none;
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, #28a745 0%, #155724 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-            z-index: 1000;
-        }
-
-        .edit-mode .save-btn {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2em;
-            }
-
-            .contact-info {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .edit-mode-toggle {
-                top: 10px;
-                right: 10px;
-                padding: 10px 20px;
-                font-size: 0.9em;
-            }
+        .skill-tag:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -10px var(--primary);
         }
     </style>
 </head>
-<body>
-    <button class="edit-mode-toggle" onclick="toggleEditMode()">✏️ Edit Mode</button>
-    <button class="save-btn" onclick="saveChanges()">💾 Save Changes</button>
+<body class="antialiased">
 
-    <div class="container">
-        <header>
-            <div class="profile-photo-container">
-                <div class="profile-photo" id="profilePhoto">OB</div>
-                <button class="photo-upload-btn" onclick="document.getElementById('photoInput').click()">📷</button>
-                <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)">
-            </div>
-            <h1 class="editable" contenteditable="false" id="name">Om Bachhav</h1>
-            <p class="editable" contenteditable="false" id="title" style="font-size: 1.2em; color: #666; margin-top: 10px;">Computer Engineering Student | Software Developer</p>
-            <div class="contact-info">
-                <a href="mailto:Ombachhav90@gmail.com" class="editable" contenteditable="false" id="email">📧 Ombachhav90@gmail.com</a>
-                <a href="tel:+919370980021" class="editable" contenteditable="false" id="phone">📱 +91 9370980021</a>
-                <span class="editable" contenteditable="false" id="location">📍 Nashik, Maharashtra</span>
-            </div>
-        </header>
+    <div class="blob"></div>
+    <div class="blob" style="right: 0; bottom: 0; background: radial-gradient(circle, rgba(139, 0, 0, 0.1) 0%, transparent 70%);"></div>
 
-        <nav>
-            <ul>
-                <li><a href="#profile">Profile</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#education">Education</a></li>
-            </ul>
-        </nav>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-dark py-4 px-6 md:px-12 flex justify-between items-center">
+        <div class="text-2xl font-extrabold tracking-tighter text-white">
+            OM<span class="text-[#ff3e3e]">.</span>
+        </div>
+        <div class="hidden md:flex space-x-8">
+            <a href="#home" class="nav-link relative text-sm font-medium hover:text-[#ff3e3e] transition-colors">Home</a>
+            <a href="#about" class="nav-link relative text-sm font-medium hover:text-[#ff3e3e] transition-colors">About</a>
+            <a href="#skills" class="nav-link relative text-sm font-medium hover:text-[#ff3e3e] transition-colors">Skills</a>
+            <a href="#projects" class="nav-link relative text-sm font-medium hover:text-[#ff3e3e] transition-colors">Projects</a>
+            <a href="#contact" class="nav-link relative text-sm font-medium hover:text-[#ff3e3e] transition-colors">Contact</a>
+        </div>
+        <a href="mailto:Ombachhav90@gmail.com" class="px-6 py-2 bg-[#ff3e3e] text-white rounded-full text-sm font-bold hover:bg-[#8b0000] transition-all transform hover:scale-105">
+            Hire Me
+        </a>
+    </nav>
 
-        <section id="profile" class="profile-section">
-            <h2>Profile</h2>
-            <p class="editable" contenteditable="false" id="profileText" style="font-size: 1.1em; color: #555;">
-                Motivated and detail-oriented Computer Engineering diploma graduate seeking an entry-level position in software development. Eager to apply strong Core Java and programming skills to contribute to organizational goals while continuously enhancing my technical expertise in a dynamic and growth-oriented environment.
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex flex-col justify-center items-center px-6 pt-20 text-center">
+        <div class="reveal active">
+            <span class="inline-block px-4 py-1 rounded-full border border-[#ff3e3e] text-[#ff3e3e] text-xs font-bold mb-6 tracking-widest uppercase">
+                Open for opportunities
+            </span>
+            <h1 class="text-5xl md:text-8xl font-extrabold mb-6 leading-tight tracking-tighter">
+                Crafting <span class="bg-gradient-to-r from-[#ff3e3e] to-[#8b0000] bg-clip-text text-transparent italic">Digital</span><br>Experiences.
+            </h1>
+            <p class="max-w-2xl text-gray-400 text-lg md:text-xl mb-10 leading-relaxed mx-auto">
+                I'm <span class="text-white font-semibold">Om Bachhav</span>, a Computer Engineering student specializing in software development. Transforming ideas into sleek, functional code.
             </p>
-        </section>
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                <a href="#projects" class="w-full md:w-auto px-10 py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center justify-center">
+                    View My Work
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
+                <a href="tel:+919370980021" class="w-full md:w-auto px-10 py-4 glass text-white font-bold rounded-xl hover:bg-white/10 transition-all">
+                    Let's Talk
+                </a>
+            </div>
+        </div>
+    </section>
 
-        <section id="skills" class="profile-section">
-            <h2>Technical Skills</h2>
-            <div class="skills-grid">
-                <div class="skill-category">
-                    <h3>Web Technologies</h3>
-                    <p class="editable" contenteditable="false" id="webTech">HTML, CSS</p>
-                </div>
-                <div class="skill-category">
-                    <h3>Programming Languages</h3>
-                    <p class="editable" contenteditable="false" id="progLang">Core Java</p>
-                </div>
-                <div class="skill-category">
-                    <h3>Databases</h3>
-                    <p class="editable" contenteditable="false" id="databases">MySQL, SQL</p>
-                </div>
-                <div class="skill-category">
-                    <h3>Tools & Frameworks</h3>
-                    <p class="editable" contenteditable="false" id="tools">Git</p>
-                </div>
-                <div class="skill-category">
-                    <h3>Concepts</h3>
-                    <p class="editable" contenteditable="false" id="concepts">OOP, Data Structures, Computer Graphics, Exception Handling, Software Testing</p>
+    <!-- About Section -->
+    <section id="about" class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div class="reveal">
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-[#ff3e3e] to-[#8b0000] rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                    <div class="relative glass rounded-2xl p-8 h-[400px] flex items-center justify-center overflow-hidden">
+                         <div class="text-8xl font-black opacity-10 select-none absolute">OB</div>
+                         <div class="z-10 text-center">
+                            <h3 class="text-3xl font-bold mb-2">Om Bachhav</h3>
+                            <p class="text-[#ff3e3e] font-semibold">Computer Engineering Student</p>
+                         </div>
+                    </div>
                 </div>
             </div>
-
-            <h2 style="margin-top: 40px;">Soft Skills</h2>
-            <div class="soft-skills-list">
-                <div class="soft-skill-tag">Problem Solving</div>
-                <div class="soft-skill-tag">Teamwork</div>
-                <div class="soft-skill-tag">Communication</div>
-                <div class="soft-skill-tag">Quick Learner</div>
-                <div class="soft-skill-tag">Time Management</div>
-                <div class="soft-skill-tag">Project Management</div>
-                <div class="soft-skill-tag">Deadline-driven</div>
+            <div class="reveal">
+                <h2 class="text-4xl font-bold mb-8">Professional <span class="text-[#ff3e3e]">Profile</span></h2>
+                <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                    Motivated and detail-oriented Computer Engineering diploma graduate seeking an entry-level position in software development. Eager to apply strong Core Java and programming skills to contribute to organizational goals while continuously enhancing technical expertise.
+                </p>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="glass p-4 rounded-xl">
+                        <div class="text-[#ff3e3e] text-2xl font-bold">79.14%</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Diploma Score</div>
+                    </div>
+                    <div class="glass p-4 rounded-xl">
+                        <div class="text-[#ff3e3e] text-2xl font-bold">2028</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">B.E. Graduation</div>
+                    </div>
+                </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="projects" class="profile-section">
-            <h2>Projects</h2>
+    <!-- Skills Section -->
+    <section id="skills" class="py-24 px-6 md:px-12 bg-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-bold mb-4">Technical <span class="text-[#ff3e3e]">Ecosystem</span></h2>
+                <p class="text-gray-400">The tools and languages I use to build robust solutions.</p>
+            </div>
             
-            <div class="project-card">
-                <h3 class="editable" contenteditable="false" id="project1Title">NexMind AI</h3>
-                <p><strong>Technologies:</strong> <span class="editable" contenteditable="false" id="project1Tech">React.JS, Firebase</span></p>
-                <p class="editable" contenteditable="false" id="project1Desc" style="margin-top: 10px;">Designed NexMind, an AI-Powered platform that will revolutionize the manner in which users interface with artificial intelligence. Features three AI models: GirlFriend AI, Doppelganger AI, and BestFriend AI.</p>
-                <a href="https://nexmind-sand.vercel.app/" target="_blank" class="project-link">View Project →</a>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
+                <!-- Category -->
+                <div class="glass p-8 rounded-3xl">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="w-2 h-8 bg-[#ff3e3e] mr-4 rounded-full"></span>
+                        Languages
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">Core Java</span>
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">HTML5</span>
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">CSS3</span>
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">SQL</span>
+                    </div>
+                </div>
+
+                <div class="glass p-8 rounded-3xl">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="w-2 h-8 bg-[#ff3e3e] mr-4 rounded-full"></span>
+                        Tools & Tech
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">React.js</span>
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">Firebase</span>
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">Git / GitHub</span>
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">MySQL</span>
+                    </div>
+                </div>
+
+                <div class="glass p-8 rounded-3xl">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="w-2 h-8 bg-[#ff3e3e] mr-4 rounded-full"></span>
+                        Core Concepts
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">OOP</span>
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">Data Structures</span>
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">Testing</span>
+                        <span class="skill-tag px-4 py-2 glass rounded-lg text-sm">Debugging</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal">
+            <div>
+                <h2 class="text-4xl font-bold mb-4">Featured <span class="text-[#ff3e3e]">Projects</span></h2>
+                <p class="text-gray-400">Practical applications of code to solve problems.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <!-- Project Card 1 -->
+            <div class="reveal group project-card">
+                <div class="relative overflow-hidden rounded-3xl mb-6 glass h-64 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#ff3e3e]/20 to-transparent"></div>
+                    <div class="text-4xl font-black text-white/20 uppercase tracking-tighter transition-all duration-500 group-hover:scale-110">NexMind AI</div>
+                </div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex gap-2 mb-3">
+                            <span class="text-[10px] px-2 py-1 glass rounded uppercase tracking-widest text-[#ff3e3e]">React.js</span>
+                            <span class="text-[10px] px-2 py-1 glass rounded uppercase tracking-widest text-[#ff3e3e]">Firebase</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 group-hover:text-[#ff3e3e] transition-colors">NexMind AI Platform</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-6">Revolutionary AI platform featuring multi-model interaction including specialized personality AIs.</p>
+                        <a href="https://nexmind-sand.vercel.app/" target="_blank" class="text-white font-bold flex items-center hover:translate-x-2 transition-transform">
+                            View Live <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <div class="project-card">
-                <h3 class="editable" contenteditable="false" id="project2Title">Sorting Visualizer Website</h3>
-                <p><strong>Technologies:</strong> <span class="editable" contenteditable="false" id="project2Tech">HTML, CSS, JavaScript</span></p>
-                <p class="editable" contenteditable="false" id="project2Desc" style="margin-top: 10px;">Interactive visualization tool demonstrating various sorting algorithms including Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, and Quick Sort with dynamic UI animations.</p>
-                <a href="https://ombachhav90.github.io/Sorting-Visualizer/" target="_blank" class="project-link">View Project →</a>
+            <!-- Project Card 2 -->
+            <div class="reveal group project-card">
+                <div class="relative overflow-hidden rounded-3xl mb-6 glass h-64 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#8b0000]/20 to-transparent"></div>
+                    <div class="text-4xl font-black text-white/20 uppercase tracking-tighter transition-all duration-500 group-hover:scale-110">Algorithm Visualizer</div>
+                </div>
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex gap-2 mb-3">
+                            <span class="text-[10px] px-2 py-1 glass rounded uppercase tracking-widest text-[#ff3e3e]">JavaScript</span>
+                            <span class="text-[10px] px-2 py-1 glass rounded uppercase tracking-widest text-[#ff3e3e]">Algorithms</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 group-hover:text-[#ff3e3e] transition-colors">Sorting Visualizer</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-6">Interactive tool demonstrating sorting logic with real-time UI updates and animation.</p>
+                        <a href="https://ombachhav90.github.io/Sorting-Visualizer/" target="_blank" class="text-white font-bold flex items-center hover:translate-x-2 transition-transform">
+                            View Live <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="experience" class="profile-section">
-            <h2>Professional Experience</h2>
-            <ul style="margin-left: 20px; color: #555;">
-                <li style="margin-bottom: 15px;">Developed multiple academic projects including a Sorting Visualizer Website and Personal Diary Android App, demonstrating strong skills in Core Java, HTML, CSS, JavaScript, and problem-solving.</li>
-                <li style="margin-bottom: 15px;">Gained hands-on experience in implementing real algorithms such as Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, and Quick Sort with interactive UI.</li>
-                <li style="margin-bottom: 15px;">Collaborated with classmates to understand requirements, design UI, test functionality, and deliver polished project outputs.</li>
-                <li style="margin-bottom: 15px;">Demonstrated strong debugging, logical thinking, and code optimization skills.</li>
-            </ul>
-        </section>
+    <!-- Education & Experience -->
+    <section class="py-24 px-6 md:px-12 bg-white/5">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16">
+            <div class="reveal">
+                <h2 class="text-3xl font-bold mb-12 flex items-center">
+                    <svg class="w-8 h-8 mr-4 text-[#ff3e3e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                    Education
+                </h2>
+                <div class="space-y-8">
+                    <div class="relative pl-8 border-l border-white/10">
+                        <div class="absolute w-4 h-4 bg-[#ff3e3e] rounded-full -left-[9px] top-1 shadow-[0_0_10px_#ff3e3e]"></div>
+                        <h4 class="text-xl font-bold">B.E. Computer Engineering</h4>
+                        <p class="text-[#ff3e3e] text-sm mb-2">2025 - 2028 (Pursuing)</p>
+                        <p class="text-gray-500 text-sm italic">JIT College of Engineering, Nashik</p>
+                    </div>
+                    <div class="relative pl-8 border-l border-white/10">
+                        <div class="absolute w-4 h-4 bg-gray-700 rounded-full -left-[9px] top-1"></div>
+                        <h4 class="text-xl font-bold">Diploma in Computer Engineering</h4>
+                        <p class="text-[#ff3e3e] text-sm mb-2">2022 - 2025 | Score: 79.14%</p>
+                        <p class="text-gray-500 text-sm italic">Mahaveer Polytechnic, Nashik</p>
+                    </div>
+                </div>
+            </div>
 
-        <section id="education" class="profile-section">
-            <h2>Education</h2>
+            <div class="reveal">
+                <h2 class="text-3xl font-bold mb-12 flex items-center">
+                    <svg class="w-8 h-8 mr-4 text-[#ff3e3e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    Experience Highlights
+                </h2>
+                <div class="space-y-6">
+                    <div class="glass p-6 rounded-2xl">
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4 italic">"Developed multiple academic projects including a Sorting Visualizer Website and Personal Diary Android App, demonstrating strong skills in Core Java."</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-[10px] font-bold text-gray-500 uppercase">Debugging</span>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase">Logic Optimization</span>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase">UI/UX Design</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact -->
+    <footer id="contact" class="py-24 px-6 md:px-12 border-t border-white/10">
+        <div class="max-w-7xl mx-auto flex flex-col items-center">
+            <h2 class="text-4xl md:text-6xl font-bold text-center mb-12 reveal">Ready to <span class="text-[#ff3e3e]">Collaborate?</span></h2>
+            <div class="flex flex-wrap justify-center gap-6 mb-16 reveal">
+                <a href="mailto:Ombachhav90@gmail.com" class="px-8 py-4 glass rounded-2xl flex items-center hover:bg-white/5 transition-all">
+                    <span class="text-sm font-medium">Ombachhav90@gmail.com</span>
+                </a>
+                <a href="tel:+919370980021" class="px-8 py-4 glass rounded-2xl flex items-center hover:bg-white/5 transition-all">
+                    <span class="text-sm font-medium">+91 9370980021</span>
+                </a>
+            </div>
             
-            <div class="education-item">
-                <h3>B.E. Computer Engineering</h3>
-                <p>JIT College of Engineering, Nashik</p>
-                <p class="year">2025 - 2028 (Pursuing)</p>
+            <div class="w-full pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs border-t border-white/5">
+                <p>© 2024 Om Bachhav. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
+                    <a href="#" class="hover:text-white transition-colors">GitHub</a>
+                    <a href="#" class="hover:text-white transition-colors">Twitter</a>
+                </div>
             </div>
-
-            <div class="education-item">
-                <h3>Diploma in Computer Engineering</h3>
-                <p>Mahaveer Polytechnic, Nashik</p>
-                <p class="year">2022 - 2025 | Score: 79.14%</p>
-            </div>
-
-            <div class="education-item">
-                <h3>SSC</h3>
-                <p>Sai International School, Baglan, Nashik</p>
-                <p class="year">2017 - 2018 | Score: 84.00%</p>
-            </div>
-        </section>
-
-        <section class="profile-section">
-            <h2>Languages</h2>
-            <div class="languages">
-                <div class="language-badge">English</div>
-                <div class="language-badge">Marathi</div>
-                <div class="language-badge">Hindi</div>
-            </div>
-        </section>
-    </div>
+        </div>
+    </footer>
 
     <script>
-        let isEditMode = false;
-        let uploadedPhoto = null;
+        // Smooth Reveal Animation on Scroll
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
 
-        function toggleEditMode() {
-            isEditMode = !isEditMode;
-            const body = document.body;
-            const editables = document.querySelectorAll('.editable');
-            const toggleBtn = document.querySelector('.edit-mode-toggle');
-            
-            if (isEditMode) {
-                body.classList.add('edit-mode');
-                editables.forEach(el => el.contentEditable = 'true');
-                toggleBtn.textContent = '❌ Cancel';
-                toggleBtn.style.background = 'linear-gradient(135deg, #dc143c 0%, #8b0000 100%)';
+        window.addEventListener("scroll", reveal);
+        // Initial call
+        reveal();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.classList.remove('py-4');
             } else {
-                body.classList.remove('edit-mode');
-                editables.forEach(el => el.contentEditable = 'false');
-                toggleBtn.textContent = '✏️ Edit Mode';
-                toggleBtn.style.background = 'linear-gradient(135deg, #dc143c 0%, #8b0000 100%)';
-                loadSavedData();
+                nav.classList.add('py-4');
+                nav.classList.remove('py-2');
             }
-        }
-
-        function handlePhotoUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedPhoto = e.target.result;
-                    const photoElement = document.getElementById('profilePhoto');
-                    photoElement.style.backgroundImage = `url(${uploadedPhoto})`;
-                    photoElement.style.backgroundSize = 'cover';
-                    photoElement.style.backgroundPosition = 'center';
-                    photoElement.textContent = '';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function saveChanges() {
-            const data = {
-                photo: uploadedPhoto || uploadedPhotoData,
-                name: document.getElementById('name').textContent,
-                title: document.getElementById('title').textContent,
-                email: document.getElementById('email').textContent,
-                phone: document.getElementById('phone').textContent,
-                location: document.getElementById('location').textContent,
-                profileText: document.getElementById('profileText').textContent,
-                webTech: document.getElementById('webTech').textContent,
-                progLang: document.getElementById('progLang').textContent,
-                databases: document.getElementById('databases').textContent,
-                tools: document.getElementById('tools').textContent,
-                concepts: document.getElementById('concepts').textContent,
-                project1Title: document.getElementById('project1Title').textContent,
-                project1Tech: document.getElementById('project1Tech').textContent,
-                project1Desc: document.getElementById('project1Desc').textContent,
-                project2Title: document.getElementById('project2Title').textContent,
-                project2Tech: document.getElementById('project2Tech').textContent,
-                project2Desc: document.getElementById('project2Desc').textContent
-            };
-            
-            portfolioData = data;
-            uploadedPhotoData = uploadedPhoto;
-            
-            alert('✅ Changes saved successfully!');
-            toggleEditMode();
-        }
-
-        let portfolioData = {};
-        let uploadedPhotoData = null;
-
-        function loadSavedData() {
-            if (Object.keys(portfolioData).length > 0) {
-                if (portfolioData.photo) {
-                    const photoElement = document.getElementById('profilePhoto');
-                    photoElement.style.backgroundImage = `url(${portfolioData.photo})`;
-                    photoElement.style.backgroundSize = 'cover';
-                    photoElement.style.backgroundPosition = 'center';
-                    photoElement.textContent = '';
-                }
-                document.getElementById('name').textContent = portfolioData.name;
-                document.getElementById('title').textContent = portfolioData.title;
-                document.getElementById('email').textContent = portfolioData.email;
-                document.getElementById('phone').textContent = portfolioData.phone;
-                document.getElementById('location').textContent = portfolioData.location;
-                document.getElementById('profileText').textContent = portfolioData.profileText;
-                document.getElementById('webTech').textContent = portfolioData.webTech;
-                document.getElementById('progLang').textContent = portfolioData.progLang;
-                document.getElementById('databases').textContent = portfolioData.databases;
-                document.getElementById('tools').textContent = portfolioData.tools;
-                document.getElementById('concepts').textContent = portfolioData.concepts;
-                document.getElementById('project1Title').textContent = portfolioData.project1Title;
-                document.getElementById('project1Tech').textContent = portfolioData.project1Tech;
-                document.getElementById('project1Desc').textContent = portfolioData.project1Desc;
-                document.getElementById('project2Title').textContent = portfolioData.project2Title;
-                document.getElementById('project2Tech').textContent = portfolioData.project2Tech;
-                document.getElementById('project2Desc').textContent = portfolioData.project2Desc;
-            }
-        }
-
-        document.querySelectorAll('nav a').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            });
-        });
-
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.profile-section').forEach(section => {
-            section.style.opacity = '0';
-            section.style.transform = 'translateY(20px)';
-            section.style.transition = 'all 0.6s ease';
-            observer.observe(section);
         });
     </script>
 </body>
 </html>
+
